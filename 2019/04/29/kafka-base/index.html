@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="kafka基础概念"><meta name="keywords" content="编程 生活"><link rel="alternate" href="/blog/default" title="往日的时光"><link rel="shortcut icon" type="image/x-icon" href="/blog/favicon.ico?v=2.11.0">
+<link rel="canonical" href="https://fylaw.github.io/blog/2019/04/29/kafka-base/">
+
+<link rel="stylesheet" type="text/css" href="/blog/lib/fancybox/jquery.fancybox.css">
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=2.11.0">
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>kafka基础概念 - 往日的时光</title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/blog/." class="logo">往日的时光</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/blog/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/blog/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/blog/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/blog/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/blog/." class="logo">往日的时光</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/blog/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">kafka基础概念
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-04-29
+        </span><span class="post-category">
+            <a href="/blog/categories/java/">java</a>
+            </span>
+        </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Broker"><span class="toc-text">Broker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Producer"><span class="toc-text">Producer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Consumer"><span class="toc-text">Consumer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Stream-Processor"><span class="toc-text">Stream Processor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Connectors"><span class="toc-text">Connectors</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Topic"><span class="toc-text">Topic</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Partition"><span class="toc-text">Partition</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Segment"><span class="toc-text">Segment</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#文件命名规则"><span class="toc-text">文件命名规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文件格式"><span class="toc-text">文件格式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#副本策略"><span class="toc-text">副本策略</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#数据同步"><span class="toc-text">数据同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#副本放置策略"><span class="toc-text">副本放置策略　　</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Leader和Follower"><span class="toc-text">Leader和Follower</span></a></li></ol></li></ol>
+    </div>
+  </div><div class="post-content"><h2 id="Broker"><a href="#Broker" class="headerlink" title="Broker"></a>Broker</h2><p>一个kafka进程就是一个broker,多个连接到同一个zookeeper的broker组成集群(cluster).一台物理机器上可以启动多个broker.</p>
+<a id="more"></a>
+<img src="/blog/2019/04/29/kafka-base/broker.png">
+<h2 id="Producer"><a href="#Producer" class="headerlink" title="Producer"></a>Producer</h2><h2 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h2><h2 id="Stream-Processor"><a href="#Stream-Processor" class="headerlink" title="Stream Processor"></a>Stream Processor</h2><h2 id="Connectors"><a href="#Connectors" class="headerlink" title="Connectors"></a>Connectors</h2><h2 id="Topic"><a href="#Topic" class="headerlink" title="Topic"></a>Topic</h2><p>是一个逻辑上的概念:一类消息的集合</p>
+<p>A stream of records. Each record consists of a key, a value and a timestamp.</p>
+<h2 id="Partition"><a href="#Partition" class="headerlink" title="Partition"></a>Partition</h2><p>是Topic物理上的分组,Topic内的每条消息通过算法被分配到其中的一个Partition上,每个Partition上的消息和其它的Partition上的消息是不重复的.</p>
+<img src="/blog/2019/04/29/kafka-base/log_anatomy.png">
+<p><strong>注意:上图每个Partition中的编号只是消息在本Partition的offset,并不是消息的标识.</strong></p>
+<h2 id="Segment"><a href="#Segment" class="headerlink" title="Segment"></a>Segment</h2><p>Partition物理上由多个Segment组成,每个Segment由两个文件构成,分别是index file和data file,其后缀名分别为.index和.log.这两个文件成对出现.</p>
+<h3 id="文件命名规则"><a href="#文件命名规则" class="headerlink" title="文件命名规则"></a>文件命名规则</h3><p>partion全局的第一个segment从0开始，后续每个segment文件名为上一个segment文件最后一条消息的offset值。数值最大为64位long大小，19位数字字符长度，没有数字用0填充.</p>
+<img src="/blog/2019/04/29/kafka-base/segement_name.jpg">
+<h3 id="文件格式"><a href="#文件格式" class="headerlink" title="文件格式"></a>文件格式</h3><p>索引文件存储大量元数据，数据文件存储大量消息，索引文件中元数据指向对应数据文件中message的物理偏移地址。</p>
+<p>以下图索引文件中元数据3,497为例，依次在数据文件中表示第3个message（在全局partiton表示第368772个message），以及该消息的物理偏移地址为497。</p>
+
+<h2 id="副本策略"><a href="#副本策略" class="headerlink" title="副本策略"></a>副本策略</h2><h3 id="数据同步"><a href="#数据同步" class="headerlink" title="数据同步"></a>数据同步</h3><p>kafka 0.8后提供了Replication机制来保证Broker的failover。</p>
+<p>引入Replication之后，同一个Partition可能会有多个Replica，而这时需要在这些Replication之间选出一个Leader，Producer和Consumer只与这个Leader交互，其它Replica作为Follower从Leader中复制数据。</p>
+<h3 id="副本放置策略"><a href="#副本放置策略" class="headerlink" title="副本放置策略　　"></a>副本放置策略　　</h3><p><strong>Kafka分配Replica的算法</strong>如下(注意!!! 下面的broker、partition副本数这些编号都是从0开始编号的)：</p>
+<ol>
+<li><p>将所有存活的N个Brokers和待分配的Partition排序</p>
+</li>
+<li><p>将第i个Partition分配到第(i mod n)个Broker上，这个Partition的第一个Replica存在于这个分配的Broker上，并且会作为partition的优先副本( <strong>这里就基本说明了一个topic的partition在集群上的大致分布情况</strong> )</p>
+</li>
+<li><p>将第i个Partition的第j个Replica分配到第((i + j) mod n)个Broker上</p>
+</li>
+<li><p>假设集群一共有4个brokers，一个topic有4个partition，每个Partition有3个副本。下图是每个Broker上的副本分配情况。</p>
+</li>
+</ol>
+<p>　　　　　　       <img src="/blog/2019/04/29/kafka-base/replication.jpg"></p>
+<h3 id="Leader和Follower"><a href="#Leader和Follower" class="headerlink" title="Leader和Follower"></a>Leader和Follower</h3><p>Partition的多个副本中会有一个Leader和多个Follower,Producer和Consumer只会和Leader打交道,Follower从Leader复制数据.</p>
+<p>对于Kafka而言，定义一个Broker是否“活着”包含两个条件：</p>
+<ul>
+<li>一是它必须维护与ZooKeeper的session（这个通过ZooKeeper的Heartbeat机制来实现）。</li>
+<li>二是Follower必须能够及时将Leader的消息复制过来，不能“落后太多”。</li>
+</ul>
+<blockquote>
+<p>参考文档:<br>[Kafka：架构简介【转】]: (<a href="https://www.cnblogs.com/seaspring/p/6138080.html" target="_blank" rel="noopener">https://www.cnblogs.com/seaspring/p/6138080.html</a>)<br>[kafka基本原理概述——patition与replication分配]: <a href="https://www.cnblogs.com/xjh713/p/7388262.html" target="_blank" rel="noopener">https://www.cnblogs.com/xjh713/p/7388262.html</a><br>[Introduction]: <a href="http://kafka.apache.org/intro" target="_blank" rel="noopener">http://kafka.apache.org/intro</a></p>
+</blockquote>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="https://fylaw.github.io/blog">Yang</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="https://fylaw.github.io/blog/2019/04/29/kafka-base/">https://fylaw.github.io/blog/2019/04/29/kafka-base/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/blog/tags/kafka/">kafka</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/blog/2019/05/14/http-content-type/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">常用HTTP Content-type列表</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/blog/2019/04/23/go-base/">
+        <span class="next-text nav-default">go_base</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:cnbjyez#gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://github.com/fylaw" class="iconfont icon-github" title="github"></a>
+        <a href="/blog/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Yang</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/blog/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/blog/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/blog/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/blog/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>
